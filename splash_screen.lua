@@ -1,8 +1,8 @@
 -----------------------------------------------------------------------------------------
 --
 -- splash_screen.lua
--- Created by: Your Name
--- Date: Month Day, Year
+-- Created by: Soren Drew
+-- Date: November 12th 2018
 -- Description: This is the splash screen of the game. It displays the 
 -- company logo that...
 -----------------------------------------------------------------------------------------
@@ -16,33 +16,44 @@ sceneName = "splash_screen"
 -----------------------------------------------------------------------------------------
 
 -- Create Scene Object
-local scene = composer.newScene( sceneName )
+local scene = composer.newScene( splash_screen )
 
 ----------------------------------------------------------------------------------------
 -- LOCAL VARIABLES
 -----------------------------------------------------------------------------------------
  
 -- The local variables for this scene
-local beetleship
-local scrollXSpeed = 8
-local scrollYSpeed = -3
-local jungleSounds = audio.loadSound("Sounds/animals144.mp3")
-local jungleSoundsChannel
+local FlossBoss
+local FlossBoss2
+local comet1
+local comet2
+local scrollSpeedComet1 = 6
+local scrollSpeedComet2 = 6
 
---------------------------------------------------------------------------------------------
--- LOCAL FUNCTIONS
---------------------------------------------------------------------------------------------
+FlossBoss = display.newImageRect("Images/companyLogoSoren.png", 600, 600)
+FlossBoss2 = display.newImageRect("Images/companyLogoGlow.png", 600, 600)
+    
+comet1 = display.newImageRect("Images/comet.png", 150, 150)
+comet2 = display.newImageRect("Images/comet.png", 150, 150)
 
--- The function that moves the beetleship across the screen
-local function moveBeetleship()
-    beetleship.x = beetleship.x + scrollXSpeed
-    beetleship.y = beetleship.y + scrollYSpeed
-end
+comet1.x = 0
+comet1.y = 450
 
--- The function that will go to the main menu 
-local function gotoMainMenu()
-    composer.gotoScene( "main_menu" )
-end
+comet2.x = 1024
+comet2.y = 150
+
+FlossBoss.isVisible = true
+FlossBoss2.isVisible = false
+----------------------------------------------------------------------------------------
+-- SOUNDS
+-----------------------------------------------------------------------------------------
+ 
+local swooshSound1 = audio.loadSound("Sounds/swoosh.mp3")
+local swooshSoundChannel1
+
+local swooshSound2 = audio.loadSound("Sounds/swoosh2.mp3")
+local swooshSoundChannel2
+
 
 -----------------------------------------------------------------------------------------
 -- GLOBAL SCENE FUNCTIONS
@@ -54,20 +65,60 @@ function scene:create( event )
     -- Creating a group that associates objects with the scene
     local sceneGroup = self.view
 
-    -- set the background to be black
-    display.setDefault("background", 0, 0, 0)
+    -- create the background image
+    local background = display.newImageRect("Images/background.jfif", 2048, 1536)
 
-    -- Insert the beetleship image
-    beetleship = display.newImageRect("Images/beetleship.png", 200, 200)
+    --put the background in the back layer
+    background:toBack()
 
-    -- set the initial x and y position of the beetleship
-    beetleship.x = 100
-    beetleship.y = display.contentHeight/2
+    -- set the initial x and y position of the flossBosses
+    FlossBoss.x = 570
+    FlossBoss.y = 350
+
+    FlossBoss2.x = 570
+    FlossBoss2.y = 350
 
     -- Insert objects into the scene group in order to ONLY be associated with this scene
-    sceneGroup:insert( beetleship )
+    sceneGroup:insert( FlossBoss )
 
 end -- function scene:create( event )
+
+--------------------------------------------------------------------------------------------
+-- LOCAL FUNCTIONS
+--------------------------------------------------------------------------------------------
+
+-- The function moves the first comet across the screen
+local function moveComet1(event)
+    comet1.x = comet1.x + scrollSpeedComet1
+    comet1.y = comet1.y - scrollSpeedComet1
+    --play the sound
+    swooshSoundChannel1 = audio.play(swooshSound1)
+    --change the image and stop the sound
+    if (comet1.y == 0) then 
+        FlossBoss.isVisible = false
+        FlossBoss2.isVisible = true
+        audio.pause(swooshSoundChannel1)
+    end
+end
+
+-- The function moves the second comet across the screen
+local function moveComet2(event)
+    comet2.x = comet2.x - scrollSpeedComet2
+    comet2.y = comet2.y + scrollSpeedComet2
+    --play the sound after a delay
+    swooshSoundChannel2 = audio.play(swooshSound2)
+    timer.performWithDelay(500, swooshSoundChannel2)
+    --stop the sound once it is off the screen
+    if (comet2.y == 500 ) then
+        audio.pause(swooshSoundChannel2)
+    end
+end
+
+
+-- The function that will go to the main menu 
+local function gotoMainMenu()
+    composer.gotoScene( "main_menu" )
+end
 
 --------------------------------------------------------------------------------------------
 
@@ -89,11 +140,9 @@ function scene:show( event )
     -----------------------------------------------------------------------------------------
 
     elseif ( phase == "did" ) then
-        -- start the splash screen music
-        jungleSoundsChannel = audio.play(jungleSounds )
-
-        -- Call the moveBeetleship function as soon as we enter the frame.
-        Runtime:addEventListener("enterFrame", moveBeetleship)
+        -- Call the movecomet1 and movecomet2 function as soon as we enter the frame.
+        Runtime:addEventListener("enterFrame", moveComet1)
+        Runtime:addEventListener("enterFrame", moveComet2)
 
         -- Go to the main menu screen after the given time.
         timer.performWithDelay ( 3000, gotoMainMenu)          
@@ -122,9 +171,13 @@ function scene:hide( event )
 
     -- Called immediately after scene goes off screen.
     elseif ( phase == "did" ) then
-        
-        -- stop the jungle sounds channel for this screen
-        audio.stop(jungleSoundsChannel)
+        --make the logo invisible after the animation is finished
+        FlossBoss.isVisible = false
+        FlossBoss2.isVisible = false  
+        comet2.isVisible = false 
+        --stop the audio
+       audio.stop(swooshSoundChannel2)
+       audio.stop(swooshSoundChannel1)
     end
 
 end --function scene:hide( event )
