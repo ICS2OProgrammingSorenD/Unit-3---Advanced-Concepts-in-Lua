@@ -1,23 +1,23 @@
 -----------------------------------------------------------------------------------------
 --
--- level1_screen.lua
--- Created by: Your Name
--- Date: Month Day, Year
--- Description: This is the level 1 screen of the game.
+-- SceneTemplate.lua
+-- Scene Template (Composer API)
+--
 -----------------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------------------
 -- INITIALIZATIONS
 -----------------------------------------------------------------------------------------
 
--- Use Composer Libraries
+-- Calling Composer Library
 local composer = require( "composer" )
+
 local widget = require( "widget" )
 
 -----------------------------------------------------------------------------------------
 
 -- Naming Scene
-sceneName = "level1_screen"
+sceneName = "you_win"
 
 -----------------------------------------------------------------------------------------
 
@@ -25,38 +25,45 @@ sceneName = "level1_screen"
 local scene = composer.newScene( sceneName )
 
 -----------------------------------------------------------------------------------------
--- LOCAL VARIABLES
+-- FORWARD REFERENCES
 -----------------------------------------------------------------------------------------
 
--- The local variables for this scene
-local bkg_image
+-- local variables for the scene
+local bkg
 
+----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
--- GLOBAL SCENE FUNCTIONS
+-- LOCAL FUNCTIONS
 -----------------------------------------------------------------------------------------
 
+--------------------------------------------------------------------------------------
 -- The function called when the screen doesn't exist
 function scene:create( event )
 
     -- Creating a group that associates objects with the scene
     local sceneGroup = self.view
 
+    -- Display background
+    bkg = display.newImage("Images/YouWin.png")
+    bkg.x = display.contentCenterX
+    bkg.y = display.contentCenterY
+    bkg.width = display.contentWidth
+    bkg.height = display.contentHeight
+   
+    -- Associating display objects with this scene 
+    sceneGroup:insert( bkg )
     -----------------------------------------------------------------------------------------
+    -- SOUNDS
+    -----------------------------------------------------------------------------------------
+    local youWinSound = audio.loadSound("Sounds/Cheer.m4a")
+    local youWinSoundChannel
 
-    -- Insert the background image
-    bkg_image = display.newImageRect("Images/level1_screen.png", display.contentWidth, display.contentHeight)
-    bkg_image.x = display.contentCenterX
-    bkg_image.y = display.contentCenterY
-    bkg_image.width = display.contentWidth
-    bkg_image.height = display.contentHeight
+    youWinSoundChannel = audio.play(youWinSound) 
+end    
 
-    -- Send the background image to the back layer so all other objects can be on top
-    bkg_image:toBack()
-
-        -- Insert background image into the scene group in order to ONLY be associated with this scene
-    sceneGroup:insert( bkg_image )    
-
-end --function scene:create( event )
+-----------------------------------------------------------------------------------------
+-- GLOBAL SCENE FUNCTIONS
+-----------------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------------------
 
@@ -65,13 +72,16 @@ function scene:show( event )
 
     -- Creating a group that associates objects with the scene
     local sceneGroup = self.view
+
+    -----------------------------------------------------------------------------------------
+
     local phase = event.phase
 
     -----------------------------------------------------------------------------------------
 
     if ( phase == "will" ) then
-
         -- Called when the scene is still off screen (but is about to come on screen).
+
     -----------------------------------------------------------------------------------------
 
     elseif ( phase == "did" ) then
@@ -79,10 +89,9 @@ function scene:show( event )
         -- Called when the scene is now on screen.
         -- Insert code here to make the scene come alive.
         -- Example: start timers, begin animation, play audio, etc.
-
     end
 
-end --function scene:show( event )
+end
 
 -----------------------------------------------------------------------------------------
 
@@ -91,6 +100,9 @@ function scene:hide( event )
 
     -- Creating a group that associates objects with the scene
     local sceneGroup = self.view
+
+    -----------------------------------------------------------------------------------------
+
     local phase = event.phase
 
     -----------------------------------------------------------------------------------------
@@ -106,7 +118,7 @@ function scene:hide( event )
         -- Called immediately after scene goes off screen.
     end
 
-end --function scene:hide( event )
+end
 
 -----------------------------------------------------------------------------------------
 
@@ -118,11 +130,11 @@ function scene:destroy( event )
 
     -----------------------------------------------------------------------------------------
 
+
     -- Called prior to the removal of scene's view ("sceneGroup").
     -- Insert code here to clean up the scene.
     -- Example: remove display objects, save state, etc.
-
-end -- function scene:destroy( event )
+end
 
 -----------------------------------------------------------------------------------------
 -- EVENT LISTENERS
@@ -137,3 +149,4 @@ scene:addEventListener( "destroy", scene )
 -----------------------------------------------------------------------------------------
 
 return scene
+

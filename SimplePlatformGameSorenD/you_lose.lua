@@ -52,7 +52,13 @@ function scene:create( event )
    
     -- Associating display objects with this scene 
     sceneGroup:insert( bkg )
-  
+    -----------------------------------------------------------------------------------------
+    -- SOUNDS
+    -----------------------------------------------------------------------------------------
+    local youLoseSound = audio.loadSound("Sounds/YouLose.mp3")
+    local youLoseSoundChannel
+
+    youLoseSoundChannel = audio.play(youLoseSound) 
 end    
 
 -----------------------------------------------------------------------------------------
