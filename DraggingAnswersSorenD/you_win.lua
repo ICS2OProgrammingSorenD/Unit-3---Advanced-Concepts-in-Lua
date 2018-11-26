@@ -27,8 +27,16 @@ sceneName = "you_win"
 local scene = composer.newScene( sceneName ) -- This function doesn't accept a string, only a variable containing a string
 
 -----------------------------------------------------------------------------------------
+-- SOUNDS
+-----------------------------------------------------------------------------------------
+--create the you win sound
+local youWinSound = audio.loadSound("Sounds/cheering.mp3")
+local youWinSoundChannel
+
+-----------------------------------------------------------------------------------------
 -- DISPLAY OBJECTS
 -----------------------------------------------------------------------------------------
+
 local bkg_image
 
 -- The function called when the screen doesn't exist
@@ -58,7 +66,9 @@ function scene:show( event )
 
     -- Creating a group that associates objects with the scene
     local sceneGroup = self.view
-
+    
+    --add the you win sound
+    youWinSoundChannel = audio.play(youWinSound)
     -----------------------------------------------------------------------------------------
 
     local phase = event.phase
